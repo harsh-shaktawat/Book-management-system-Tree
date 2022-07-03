@@ -674,110 +674,97 @@ void q4(){
     }
 }
 
-// void createList(struct btreeNode* myNode, freqNode** head,char sub[30]){
-//     int i;
-//     if (myNode) {
-//         char str[30];
-//         str[0]='\0';
-//             for (i = 0; i < myNode->count; i++) {
-//                     createList(myNode->link[i],head,sub);
-//                     if(strcmp(myNode->val[i+1]->subject,sub)==0){
-//                         int cnt=myNode->val[i+1]->copies_available;
-//                         char title[30],author[30];
-//                         //printf("found\n");
-//                         strcpy(title,myNode->val[i+1]->title);
-//                         strcpy(author,myNode->val[i+1]->author);
-//                         freqNode* tempHead=*head;
-//                         tempHead=insertFreqNode(tempHead,createFreqNode(str,cnt,title,author));
-//                         *head=tempHead;
-//                     }
-//             }
-//             createList(myNode->link[i],head,sub);
-//     }
-// }
-// void q5(struct btreeNode* myNode ){
-//     char sub[30];
-//     printf("\nEnter the subject of books\n");
-//     scanf("%s", sub);
-//     freqNode* head=NULL;
-//     if(myNode==NULL){
-//         printf("Book List is empty\n");
-//     }
-//     else{
-//         createList(myNode,&head,sub);
-//         head=MergeSortF(head);
-//         freqNode* ptr=head;
-//         if(head==NULL){
-//             printf("No book of subject %s\n",sub);
-//         }
-//         else{
-//             printf("\nBooks of subject %s based on copies availbale\n\n",sub);
-//             while(ptr!=NULL){
-//                 printf("Title:%s\tAuthor:%s\tCopies Available:%d\n", ptr->title,ptr->author,ptr->count);
-//                 ptr=ptr->next;
-//             }
-//             printf("\n");
-//         }
-        //     }
-// }
+void createList(treeNode* root,freqNode** head,char sub[30]){
+    if(!root) return;
+    createList(root->left,head,sub);
+    if(strcmp(root->book.subject,sub)==0){
+        int cnt=root->book.copies_available;
+        char title[30],author[30];
+        //printf("found\n");
+        strcpy(title,root->book.title);
+        strcpy(author,root->book.author);
+        freqNode* tempHead=*head;
+        char str[30];
+        str[0]='\0';
+        tempHead=insertFreqNode(tempHead,createFreqNode(str,cnt,title,author));
+        *head=tempHead;
+    }        
+    createList(root->right,head,sub);
+}
+void q5(){
+    char sub[30];
+    printf("\nEnter the subject of books\n");
+    scanf("%s", sub);
+    freqNode* head=NULL;
+    if(BKL_root==NULL){
+        printf("Book List is empty\n");
+    }
+    else{
+        createList(BKL_root,&head,sub);
+        head=MergeSortF(head);
+        freqNode* ptr=head;
+        if(head==NULL){
+            printf("No book of subject %s\n",sub);
+        }
+        else{
+            printf("\nBooks of subject %s based on copies availbale\n\n",sub);
+            while(ptr!=NULL){
+                printf("Title:%s\tAuthor:%s\tCopies Available:%d\n", ptr->title,ptr->author,ptr->count);
+                ptr=ptr->next;
+            }
+            printf("\n");
+        }
+    }
+}
 
-// void q6(struct btreeNode* myNode,requestNode* queueHead){
-//     requestNode* ptr=queueHead;
-//     if(ptr==NULL){
-//         printf("\nRequest queue is empty\n");
-//     }
-//     else{
-//         printf("\nName(title) of requested books whose copies are available\n");
-//         while(ptr!=NULL){
-//             int cnt;
-//             countAvailableCopies(myNode,ptr->bookTitle,&cnt);
-//             if(cnt>0){
-//                 printf("%s\n",ptr->bookTitle);
-//             }
-//             ptr=ptr->next;
-//         }
-//     }
-    // }
+void q6(){
+    requestQueue* ptr=RQ_root;
+    if(ptr==NULL){
+        printf("\nRequest queue is empty\n");
+    }
+    else{
+        printf("\nName(title) of requested books whose copies are available\n");
+        while(ptr!=NULL){
+            int cnt=0;
+            countAvailableCopies(BKL_root,ptr->request.bookTitle,&cnt);
+            if(cnt>0){
+                printf("%s\n",ptr->request.bookTitle);
+            }
+            ptr=ptr->next;
+        }
+    }
+    }
 
-// void bookissued0(struct btreeNode* myNode){
-//     int i;
-//     if (myNode) {
-//             for (i = 0; i < myNode->count; i++) {
-//                     bookissued0(myNode->link[i]);
-//                     if(myNode->val[i+1]->copies_issued==0){
-//                         printf("%s\n",myNode->val[i+1]->title);
-//                     }
-//             }
-//             bookissued0(myNode->link[i]);
-//     }
-// }
-// void q7(struct btreeNode* myNode){
-//     printf("\nTitle of books which have not been issued by anyone\n");
-//     bookissued0(myNode);
-// }
+void bookissued0(treeNode* root){
+    if(!root) return;
+    if(root->book.copies_issued==0){
+        printf("%s\n", root->book.title);
+    }
+    bookissued0(root->left);
+    bookissued0(root->right);
+}
+void q7(){
+    printf("\nTitle of books which have not been issued by anyone\n");
+    bookissued0(BKL_root);
+}
 
-// void idRange(struct btreeNode* myNode,int lo,int hi){
-//     int i;
-//     if (myNode) {
-//             for (i = 0; i < myNode->count; i++) {
-//                     idRange(myNode->link[i],lo,hi);
-//                     if(lo<=myNode->val[i+1]->id && myNode->val[i+1]->id<=hi){
-//                         printf("ID:%d\tTitle:%s\n",myNode->val[i+1]->id, myNode->val[i+1]->title);
-//                     }
-//             }
-//             idRange(myNode->link[i],lo,hi);
-//     }
-// }
-
-// void q8(struct btreeNode* myNode){
-//     int From_Book_ID,To_Book_ID;
-//     printf("Enter starting id:\n");
-//     scanf("%d", &From_Book_ID);
-//     printf("Enter ending id:\n");
-//     scanf("%d", &To_Book_ID);
-//     printf("Books with their id in range %d to %d\n",From_Book_ID,To_Book_ID);
-//     idRange(myNode,From_Book_ID,To_Book_ID);
-// }
+void idRange(treeNode* root,int lo,int hi){
+    if(!root) return;
+    if(lo<=root->book.id && root->book.id<=hi){
+        printf("%s\n", root->book.title);
+    }
+    idRange(root->left,lo,hi);
+    idRange(root->right,lo,hi);
+}
+void q8(){
+    int From_Book_ID,To_Book_ID;
+    printf("Enter starting id:\n");
+    scanf("%d", &From_Book_ID);
+    printf("Enter ending id:\n");
+    scanf("%d", &To_Book_ID);
+    printf("Books with their id in range %d to %d\n",From_Book_ID,To_Book_ID);
+    idRange(BKL_root,From_Book_ID,To_Book_ID);
+}
 
 void questions(){
     int opt;
@@ -796,18 +783,18 @@ void questions(){
     else if(opt==4){
         q4();
     }
-    // else if(opt==5){
-    //     q5(root);
-    // }
-    // else if(opt==6){
-    //     q6(root,myQueue->front);
-    // }
-    // else if(opt==7){
-    //     q7(root);
-    // }
-    // else if(opt==8){
-    //     q8(root);
-    // }
+    else if(opt==5){
+        q5();
+    }
+    else if(opt==6){
+        q6();
+    }
+    else if(opt==7){
+        q7();
+    }
+    else if(opt==8){
+        q8();
+    }
     else{
         printf("INVALID OPTION\n");
     }
